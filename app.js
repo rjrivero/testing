@@ -84,6 +84,12 @@ http.createServer(function(req, res) {
         }
     }
 
+    if(!(/.cs$/.test(req.url))) {
+        res.writeHead(304, 'Not Modified');
+        res.end();
+        return;
+    }
+
     var options = {
         hostname: '10.197.108.61',
         port: 443,
@@ -93,9 +99,6 @@ http.createServer(function(req, res) {
     };
 
     var preq = https.request(options, function(pres) {
-        if(!(/.cs$/.test(req.url))) {
-            pres.headers['Cache-Control'] = 'public, max-age=7200';
-        }
         res.writeHead(pres.statusCode, pres.headers);
         pres.on('data', function(chunk) {
             res.write(chunk);
