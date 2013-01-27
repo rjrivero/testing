@@ -11,6 +11,7 @@
     "lodash": "*",
     "passport": "*",
     "passport-http": "*",
+    "http-proxy": "*",
     "request": "*"
   }
 }

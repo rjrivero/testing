@@ -8,6 +8,9 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , passport = require('passport')
+  , https = require('https')
+  , proxy = require('http-proxy')
+  , util = require('util')
   , Strategy = require('passport-http').BasicStrategy
   , cisco = require('./lib/cisco')
   ;
@@ -55,7 +58,7 @@ app.get('/quit', function() {
 app.get('/cisco', function(req, res) {
     var options = {
         host: "10.197.108.61",
-        username: "fake",
+        username: "admin",
         password: req.user.password
     };
     cisco.getSID(options, function(err, sid) {
@@ -63,6 +66,50 @@ app.get('/cisco', function(req, res) {
     });
 });
 
+/*
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
+*/
+
+http.createServer(function(req, res) {
+
+    var headers = {};
+
+    for(item in req.headers) {
+        if(req.headers.hasOwnProperty(item)) {
+            if(item !== 'host' && item !== 'connection') {
+                headers[item] = req.headers[item];
+            }
+        }
+    }
+
+    var options = {
+        hostname: '10.197.108.61',
+        port: 443,
+        method: req.method,
+        headers: headers,
+        path: req.url,
+    };
+
+    var preq = https.request(options, function(pres) {
+        res.writeHead(pres.statusCode, pres.headers);
+        pres.on('data', function(chunk) {
+            res.write(chunk);
+        });
+        pres.on('end', function() {
+            res.end();
+        });
+    });
+    preq.on('error', function(err) {
+        res.end(err);
+    });
+
+    req.on('data', function(chunk) {
+        preq.write(chunk);
+    });
+    req.on('end', function() {
+        preq.end();
+    });
+
+}).listen(8080);
