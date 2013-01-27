@@ -57,7 +57,7 @@ app.get('/quit', function() {
 
 app.get('/cisco', function(req, res) {
     var options = {
-        host: "www.google.es",
+        host: "10.197.108.61",
         username: "root",
         password: req.user.password
     };
