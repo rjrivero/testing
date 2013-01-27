@@ -57,8 +57,8 @@ app.get('/quit', function() {
 
 app.get('/cisco', function(req, res) {
     var options = {
-        host: "10.197.108.61",
-        username: "admin",
+        host: "www.google.es",
+        username: "root",
         password: req.user.password
     };
     cisco.getSID(options, function(err, sid) {
