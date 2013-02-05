@@ -8,10 +8,6 @@
   "dependencies": {
     "express": "3.0.6",
     "jade": "*",
-    "lodash": "*",
-    "passport": "*",
-    "passport-http": "*",
-    "http-proxy": "*",
     "request": "*"
   }
 }
