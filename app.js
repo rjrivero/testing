@@ -4,19 +4,32 @@
  */
 
 var express = require('express')
-  , routes = require('./routes')
   , http = require('http')
   , path = require('path')
+  , routes = require('./routes')
+  , cisco = require('./lib/cisco')
   ;
 
-var ciscoCamera = new cisco.Camera({
-  hostname: "10.197.108.61",
-  username: "admin",
-  password: process.env['CISCO_CAMERA_PASSWORD'],
-  protocol: 'http'
-});
+var options = {
+  cisco: {
+    hostname: '10.197.108.61',
+    username: 'admin',
+    password: process.env['CISCO_CAMERA_PASSWORD'],
+    protocol: 'http',
+    channel_name: 'h264',
+    rtsp_port: 554,
+    media_port: 32768,
+    width: 1280,
+    height: 720,
+    frames: 15
+  }
+}
 
-var app = express();
+var ciscoCamera = new cisco.Camera(options.cisco)
+  , app = express()
+  ;
+
+routes.set({ cisco: ciscoCamera });
 
 app.configure(function(){
   app.set('port', process.env.PORT || 8080);
@@ -34,13 +47,8 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/quit', function() {
-  process.exit(0);
-});
-
 app.get('/', routes.index);
-app.get('/cisco', routes.cisco);
-app.get('/axis', routes.axis);
+app.get('/quit', routes.quit);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
