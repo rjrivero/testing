@@ -9,6 +9,7 @@
     "express": "3.0.6",
     "jade": "*",
     "request": "*",
-    "async": "*"
+    "async": "*",
+    "lodash": "*"
   }
 }

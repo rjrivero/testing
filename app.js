@@ -8,31 +8,51 @@ var express = require('express')
   , path = require('path')
   , routes = require('./routes')
   , cisco = require('./lib/cisco')
+  , vlc = require('./lib/vlc')
   ;
 
 var options = {
-  cisco: {
-    hostname: '10.197.108.61',
-    username: 'admin',
-    password: process.env['CISCO_CAMERA_PASSWORD'],
-    protocol: 'http',
-    channel_name: 'h264',
-    rtsp_port: 554,
-    media_port: 32768,
-    width: 1280,
-    height: 720,
-    frames: 15
-  }
-}
 
-var ciscoCamera = new cisco.Camera(options.cisco)
-  , app = express()
+    ciscoCamera: {
+      name: 'Camara Cisco HD',
+      hostname: '10.197.108.61',
+      username: 'admin',
+      password: process.env['CISCO_CAMERA_PASSWORD'],
+      protocol: 'http',
+      channelName: 'live',
+      rtspPort: 554,
+      mediaPort: 32768,
+      width: 1280,
+      height: 720,
+      frames: 15
+    },
+
+    vlcSwitch: {
+      privHostname: '127.0.0.1',
+      privPort: 8080,
+      pubHostname: '127.0.0.1',
+      pubPort: 8080,
+      path: 'cisco',
+    }
+
+  }
+  , sources = [ 
+    new cisco.Camera(options.ciscoCamera)
+  ]
+  ;
+  
+
+var app = express()
+  , vlcSwitch = new vlc.Switch(options.vlcSwitch, sources)
   ;
 
-routes.set({ cisco: ciscoCamera });
+routes.set({
+  sources: sources,
+  vlc: vlcSwitch,
+});
 
 app.configure(function(){
-  app.set('port', process.env.PORT || 8080);
+  app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.favicon());
@@ -48,6 +68,7 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+app.get('/stream/:id', routes.stream);
 app.get('/quit', routes.quit);
 
 http.createServer(app).listen(app.get('port'), function(){

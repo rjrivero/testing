@@ -1,9 +1,19 @@
 extends layout
 
 block content
+
   h1= title
-  p Welcome to #{title}
+
+  h2 Flujos RTP (solo accesibles desde VPN)
+
   ul
-    li Camara Cisco
-      a(href='#{cisco}')
-    
+    each source, index in sources
+      li
+        a(href=urls[index]) #{source.name}
+
+  h2 Flujos HTTP (desde red pública)
+  
+  ul
+    each source, index in sources
+      li
+        a(target='video', href="/stream/#{index}") #{source.name}
