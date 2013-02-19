@@ -28,9 +28,9 @@ var options = {
     },
 
     vlcSwitch: {
-      privHostname: '127.0.0.1',
+      privHostname: process.env['VLC_INTERNAL_IP' ] || '127.0.0.1',
       privPort: 8080,
-      pubHostname: '127.0.0.1',
+      pubHostname: process.env['VLC_EXTERNAL_IP'] || '127.0.0.1',
       pubPort: 8080,
       path: 'cisco',
     }
