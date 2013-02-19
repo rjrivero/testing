@@ -16,4 +16,8 @@ block content
   ul
     each source, index in sources
       li
-        a(target='video', href="/stream/#{index}") #{source.name}
+        a(href='#', onclick='javascript: embedPlayer('+index+');') #{source.name}
+  
+  h2 Reproductor
+  
+  div#player Seleccione una fuente de vídeo HTTP.
