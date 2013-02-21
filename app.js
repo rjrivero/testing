@@ -14,7 +14,7 @@ var express = require('express')
 var options = {
 
     ciscoCamera: {
-      name: 'Camara Cisco HD',
+      name: 'Camara HD',
       hostname: '10.197.108.61',
       username: 'admin',
       password: process.env['CISCO_CAMERA_PASSWORD'],
@@ -27,6 +27,14 @@ var options = {
       frames: 15
     },
 
+    axisCamera: {
+      name: 'Camara no-HD',
+      hostname: '10.197.108.82',
+      rtspPort: 554,
+      width: 640,
+      height: 480,
+    },
+
     vlcSwitch: {
       privHostname: process.env['VLC_INTERNAL_IP' ] || '127.0.0.1',
       privPort: 8080,
@@ -37,10 +45,10 @@ var options = {
 
   }
   , sources = [ 
-    new cisco.Camera(options.ciscoCamera)
+    new cisco.Camera(options.ciscoCamera),
+    new axis.Camera(options.axisCamera)
   ]
   ;
-  
 
 var app = express()
   , vlcSwitch = new vlc.Switch(options.vlcSwitch, sources)
