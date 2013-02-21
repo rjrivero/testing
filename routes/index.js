@@ -9,6 +9,8 @@ var async = require('async')
  * {
  *   sources: Objetos "Camera" de Cisco o Axis
  *   vlc: Objeto "vlc.switch"
+ *   delay: intervalo de tiempo (ms) a esperar a que VLC se "caliente",
+ *          antes de devolver la URL de streaming de un video.
  * }
  */
 exports.set = function(options) {
@@ -27,10 +29,13 @@ exports.stream = function(req, res) {
     config.vlc.activate(id, function(err, url) {
       if(err) {
         console.log(err);
-        res.redirect('/');
+        res.send({ err: utils.inspect(err) });
       }
       else {
-        res.redirect(url);
+	setTimeout(function() {
+          var source = config.sources[id];
+          res.send({ url: url, width: source.width, height: source.height });
+        }, config.delay || 5000);
       }
     });
   }

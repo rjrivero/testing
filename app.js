@@ -32,7 +32,7 @@ var options = {
       privPort: 8080,
       pubHostname: process.env['VLC_EXTERNAL_IP'] || '127.0.0.1',
       pubPort: 8080,
-      path: 'cisco',
+      path: 'stream.mp4',
     }
 
   }
